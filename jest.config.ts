@@ -1,7 +1,7 @@
 import { Config } from "@jest/types";
 
 const config: Config.InitialOptions = {
-  testMatch: ["**/__tests__/**/*.test.[jt]s"],
+  testMatch: ["**/__tests__/**/*.test.ts"],
   preset: "ts-jest",
   globals: {
     "ts-jest": {
