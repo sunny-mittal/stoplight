@@ -1,36 +1,12 @@
 {
-  "compilerOptions": {
-    "allowJs": false,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./src/*", "./types/*"]
-    },
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "noEmit": true,
-    "preserveConstEnums": true,
-    "removeComments": false,
-    "skipLibCheck": false,
-    "sourceMap": true,
-    "strict": true,
-    "target": "esnext",
-    "resolveJsonModule": true,
-    "types": [
-      "jest",
-      "node",
-      "webpack-env",
-    ]
-  },
   "include": [
-    "src",
-    "types"
-  ]
+    "src"
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./",
+    "target": "ESNext",
+    "jsx": "react",
+    "esModuleInterop": true
+  }
 }

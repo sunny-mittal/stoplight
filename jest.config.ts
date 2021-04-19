@@ -1,7 +1,7 @@
-import { Config } from "@jest/types";
+import { Config } from "@jest/types"
 
 const config: Config.InitialOptions = {
-  testMatch: ["**/__tests__/**/*.test.ts"],
+  testMatch: ["**/__tests__/**/*.test.[jt]s"],
   preset: "ts-jest",
   globals: {
     "ts-jest": {
@@ -9,6 +9,6 @@ const config: Config.InitialOptions = {
     },
   },
   transform: { "\\.ts$": "ts-jest" },
-};
+}
 
-export default config;
+export default config

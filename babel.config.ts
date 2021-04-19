@@ -1,5 +1,13 @@
-const config = {
-  presets: ["@babel/preset-env", "@babel/preset-typescript"],
-};
-
-export default config;
+module.exports = {
+  presets: [
+    [
+      "@babel/preset-env",
+      {
+        targets: {
+          node: 12,
+        },
+      },
+    ],
+    "@babel/preset-typescript",
+  ],
+}
