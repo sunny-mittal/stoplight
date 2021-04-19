@@ -1,4 +1,3 @@
-import Transition from "../Transition"
 import { mockMachine } from "./mocks"
 
 const { a: stateA } = mockMachine.states

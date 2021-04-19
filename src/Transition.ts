@@ -10,7 +10,7 @@ class Transition<
   machine: Machine<Event, Context>
 
   constructor(
-    transition: TTransition<Context>,
+    transition: TTransition<Context> | string,
     machine: Machine<Event, Context>,
   ) {
     this.transition =

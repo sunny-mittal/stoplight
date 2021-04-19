@@ -14,11 +14,17 @@ type Config<Event extends string, Context extends Record<string, unknown>> = {
 }
 
 class Machine<Event extends string, Context extends Record<string, unknown>> {
+  // recursive data structure that enumerates all allowed states and their transitions
   states: Record<string, State<Event, Context>>
+  // k/v map of guards to functions used by string guard types on states
   guards?: RootGuards<Context>
+  // k/v map of actions to functions used by string action types on states
   actions?: Record<string, ActionFunction<Context>>
+  // read-write data object passed around to check guards, pass into actions, etc
   context: Context
+  // Simple string representation of state to make state checking simpler
   stateString: string
+  // Actual state object through which to dispatch events
   currentState: State<Event, Context>
 
   constructor({
