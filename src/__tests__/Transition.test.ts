@@ -1,9 +1,8 @@
 import Transition from "../Transition"
-import { mockConfig } from "./mockConfig"
+import { mockMachine } from "./mocks"
 
-const { a: stateA } = mockConfig.states
+const { a: stateA } = mockMachine.states
 
-const { guards } = mockConfig
 const simple = stateA.on.EVENT_B
 const extended = stateA.on.EVENT_D
 const extendedGuardedFail = stateA.on.SHOULD_FAIL
@@ -11,49 +10,42 @@ const extendedGuardedPass = stateA.on.SHOULD_PASS
 const extendedGuardedMaybe = stateA.on.MIGHT_PASS
 const multiple = stateA.on.EVENT_C
 
+type TransitionObject = {
+  target: string
+}
+
 describe("Transition#getTarget", () => {
   describe("unguarded transitions", () => {
     it("returns a simple string target", async () => {
-      const transition = new Transition(simple, null, guards)
-      expect(await transition.getTarget()).toBe(simple)
+      expect(await simple.getTarget()).toBe(
+        (simple.__getTransition__() as TransitionObject).target,
+      )
     })
-
-    it("returns and extended, unguarded target", async () => {
-      const transition = new Transition(extended, null, guards)
-      expect(await transition.getTarget()).toBe(extended.target)
+    it("returns an extended, unguarded target", async () => {
+      expect(await extended.getTarget()).toBe(
+        (extended.__getTransition__() as TransitionObject).target,
+      )
     })
   })
-
   describe("guarded transitions", () => {
     it("returns null when a guarded transition fails", async () => {
-      const transition = new Transition(extendedGuardedFail, null, guards)
-      expect(await transition.getTarget()).toBeNull()
+      expect(await extendedGuardedFail.getTarget()).toBeNull()
     })
-
     it("returns the correct target when guarded transition passes", async () => {
-      const transition = new Transition(extendedGuardedPass, null, guards)
-      expect(await transition.getTarget()).toBe(extendedGuardedPass.target)
+      expect(await extendedGuardedPass.getTarget()).toBe(
+        (extendedGuardedPass.__getTransition__() as TransitionObject).target,
+      )
     })
-
     it("passes the context to guarded transitions", async () => {
-      let transition = new Transition(
-        extendedGuardedMaybe,
-        { shouldPass: true },
-        guards,
+      mockMachine.write({ shouldPass: true })
+      expect(await extendedGuardedMaybe.getTarget()).toBe(
+        (extendedGuardedMaybe.__getTransition__() as TransitionObject).target,
       )
-      expect(await transition.getTarget()).toBe(extendedGuardedMaybe.target)
-
-      transition = new Transition(
-        extendedGuardedMaybe,
-        { shouldPass: false },
-        guards,
-      )
-      expect(await transition.getTarget()).toBeNull()
+      mockMachine.write({ shouldPass: false })
+      expect(await extendedGuardedMaybe.getTarget()).toBeNull()
     })
-
     it("falls back to unguarded transitions when guards fail", async () => {
-      const transition = new Transition(multiple, null, guards)
-      expect(await transition.getTarget()).toBe("d")
+      expect(await multiple.getTarget()).toBe("d")
     })
   })
 })

@@ -1,7 +1,9 @@
+import Machine from "../Machine"
+
 export const globalGuardFn = () => Promise.resolve(false)
 export const stateGuardFn = () => Promise.resolve(true)
 
-export const mockConfig = {
+const mockConfig = {
   initial: "a",
   context: {
     int: 4,
@@ -56,3 +58,5 @@ export const mockConfig = {
   },
   actions: {},
 }
+
+export const mockMachine = new Machine(mockConfig)

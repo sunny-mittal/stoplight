@@ -16,3 +16,18 @@ export type Transition<Context> =
   | ExtendedTransition<Context>[]
 
 export type RootGuards<Context> = Record<string, GuardFunction<Context>>
+export type EventMap<
+  Event extends string,
+  Context extends Record<string, unknown>
+> = {
+  [key in Event]?: Transition<Context>
+}
+
+export type State<
+  Event extends string,
+  Context extends Record<string, unknown>
+> = {
+  invoke?: any
+  on?: EventMap<Event, Context>
+  states?: Record<string, State<Event, Context>>
+}
