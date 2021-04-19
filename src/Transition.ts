@@ -1,21 +1,4 @@
-type GuardFunction<Context> = (context: Context) => Promise<boolean>
-type Guard<Context> = string | GuardFunction<Context>
-
-type ActionFunction<Context> = (context: Context) => void
-type Action<Context> = string | ActionFunction<Context>
-
-type ExtendedTransition<Context> = {
-  target?: string
-  guard?: Guard<Context> | Guard<Context>[]
-  actions?: Action<Context> | Action<Context>[]
-}
-
-type TTransition<Context> =
-  | string
-  | ExtendedTransition<Context>
-  | ExtendedTransition<Context>[]
-
-type RootGuards<Context> = Record<string, GuardFunction<Context>>
+import { Transition as TTransition, RootGuards, Guard } from "../types"
 
 class Transition<Context> {
   private transition: TTransition<Context>

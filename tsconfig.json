@@ -5,6 +5,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./",
+    "moduleResolution": "node",
     "target": "ESNext",
     "jsx": "react",
     "esModuleInterop": true
