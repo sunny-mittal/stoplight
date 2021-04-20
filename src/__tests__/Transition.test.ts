@@ -8,9 +8,11 @@ const extendedGuardedFail = stateA.on.SHOULD_FAIL
 const extendedGuardedPass = stateA.on.SHOULD_PASS
 const extendedGuardedMaybe = stateA.on.MIGHT_PASS
 const multiple = stateA.on.EVENT_C
+const action = mockMachine.actions.a
 
 type TransitionObject = {
   target: string
+  actions: any
 }
 
 describe("Transition#getTarget", () => {
@@ -46,5 +48,18 @@ describe("Transition#getTarget", () => {
     it("falls back to unguarded transitions when guards fail", async () => {
       expect(await multiple.getTarget()).toBe("d")
     })
+  })
+
+  it("executes named actions on entry", async () => {
+    expect(action).not.toHaveBeenCalled()
+    await multiple.getTarget()
+    expect(action).toHaveBeenCalled()
+  })
+
+  it.only("executed inline actions on entry", async () => {
+    const action = (extended.__getTransition__() as TransitionObject).actions
+    expect(action).not.toHaveBeenCalled()
+    await extended.getTarget()
+    expect(action).toHaveBeenCalled()
   })
 })

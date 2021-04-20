@@ -1,5 +1,6 @@
 import { Transition as TTransition, RootGuards, Guard } from "../types"
 import Machine from "./Machine"
+import { executeActions } from "./utils"
 
 class Transition<
   Event extends string,
@@ -20,21 +21,24 @@ class Transition<
 
   async getTarget() {
     const { transition } = this
-    const { guards: rootGuards, context } = this.machine
+    const { guards: rootGuards, context, actions: rootActions } = this.machine
+    let nextTarget = null
     if (!Array.isArray(transition)) {
-      const { guard, target } = transition
+      const { guard, target, actions } = transition
       if (!guard || (await areGuardsSatisfied(guard, rootGuards, context))) {
-        return target
+        nextTarget = target
+        executeActions(actions, rootActions, context)
       }
     } else {
       for (let candidate of transition) {
-        const { guard, target } = candidate
+        const { guard, target, actions } = candidate
         if (await areGuardsSatisfied(guard, rootGuards, context)) {
-          return target
+          nextTarget = target
+          executeActions(actions, rootActions, context)
         }
       }
     }
-    return null
+    return nextTarget
   }
 
   // Testing only

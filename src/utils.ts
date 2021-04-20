@@ -1,4 +1,10 @@
-import { State as TState, Transition as TTransition, EventMap } from "../types"
+import {
+  State as TState,
+  Transition as TTransition,
+  EventMap,
+  ActionFunction,
+  Action,
+} from "../types"
 import Machine from "./Machine"
 import State from "./State"
 import Transition from "./Transition"
@@ -52,4 +58,21 @@ export const createTransitions = <
     }),
     {} as Record<Event, Transition<Event, Context>>,
   )
+}
+
+export const executeActions = <Context extends Record<string, unknown>>(
+  stateActions: Action<Context> | Action<Context>[],
+  rootActions: Record<string, ActionFunction<Context>>,
+  context: Context,
+) => {
+  if (!stateActions) return
+  if (!Array.isArray(stateActions)) {
+    if (typeof stateActions === "string") rootActions?.[stateActions]?.(context)
+    else stateActions(context)
+  } else {
+    for (let action of stateActions) {
+      if (typeof action === "string") rootActions?.[action]?.(context)
+      else action(context)
+    }
+  }
 }

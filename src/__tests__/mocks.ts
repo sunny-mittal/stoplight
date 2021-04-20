@@ -20,6 +20,7 @@ const mockConfig = {
         ],
         EVENT_D: {
           target: "d",
+          actions: jest.fn(),
         },
         SHOULD_FAIL: {
           target: "nope",
@@ -56,7 +57,9 @@ const mockConfig = {
   guards: {
     globalGuard: globalGuardFn,
   },
-  actions: {},
+  actions: {
+    a: jest.fn(),
+  },
 }
 
 export const mockMachine = new Machine(mockConfig)
