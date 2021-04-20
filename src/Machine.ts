@@ -2,7 +2,7 @@ import invariant from "invariant"
 
 import State from "./State"
 import { ActionFunction, RootGuards, State as TState } from "../types"
-import { createStates, getStateNode } from "./utils"
+import { createStates, getStateNode, parseState } from "./utils"
 import { INVALID_INITIAL_STATE, NO_INITIAL_STATE } from "./constants"
 
 type Config<Event extends string, Context extends Record<string, unknown>> = {
@@ -25,7 +25,7 @@ class Machine<Event extends string, Context extends Record<string, unknown>> {
   // Simple string representation of state to make state checking simpler
   stateString: string
   // Actual state object through which to dispatch events
-  currentState: State<Event, Context>
+  stateNode: State<Event, Context>
 
   constructor({
     initial,
@@ -36,8 +36,8 @@ class Machine<Event extends string, Context extends Record<string, unknown>> {
   }: Config<Event, Context>) {
     invariant(initial, NO_INITIAL_STATE)
     this.states = createStates(states, this)
-    this.currentState = getStateNode(this, initial)
-    invariant(this.currentState, INVALID_INITIAL_STATE)
+    this.stateNode = getStateNode(this, initial)
+    invariant(this.stateNode, INVALID_INITIAL_STATE)
 
     this.stateString = initial
     this.guards = guards
@@ -50,7 +50,19 @@ class Machine<Event extends string, Context extends Record<string, unknown>> {
   }
 
   async send(event: Event, payload?: any) {
-    const nextState = await this.currentState.send(event, payload)
+    const nextState = await this.stateNode.send(event, payload)
+    if (!nextState) return
+    if (nextState !== this.stateString) {
+      const nextNode = getStateNode(this, nextState)
+      if (nextNode) {
+        this.stateNode = nextNode
+        this.stateString = nextState
+      }
+    }
+  }
+
+  toStrings() {
+    return parseState(this.stateString)
   }
 }
 

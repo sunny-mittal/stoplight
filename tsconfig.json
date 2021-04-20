@@ -6,7 +6,7 @@
     "outDir": "./dist",
     "rootDir": "./",
     "moduleResolution": "node",
-    "target": "ESNext",
+    "target": "ES2019",
     "jsx": "react",
     "esModuleInterop": true
   }

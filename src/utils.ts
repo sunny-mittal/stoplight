@@ -1,15 +1,10 @@
-import {
-  State as TState,
-  Transition as TTransition,
-  RootGuards,
-  EventMap,
-} from "../types"
+import { State as TState, Transition as TTransition, EventMap } from "../types"
 import Machine from "./Machine"
 import State from "./State"
 import Transition from "./Transition"
 
 const DELIMITER = "."
-const parseState = (state: string) => state.split(DELIMITER)
+export const parseState = (state: string) => state.split(DELIMITER)
 
 export const getStateNode = <
   Event extends string,
@@ -50,7 +45,7 @@ export const createTransitions = <
   eventMap: EventMap<Event, Context> = {},
   machine: Machine<Event, Context>,
 ) => {
-  return Object.entries<TTransition<Context>>(eventMap).reduce(
+  return Object.entries<TTransition<Context> | string>(eventMap).reduce(
     (transitions, [event, transition]) => ({
       ...transitions,
       [event]: new Transition(transition, machine),

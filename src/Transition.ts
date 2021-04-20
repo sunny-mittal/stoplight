@@ -5,7 +5,7 @@ class Transition<
   Event extends string,
   Context extends Record<string, unknown>
 > {
-  private transition: TTransition<Context>
+  private transition: Exclude<TTransition<Context>, string>
   // Reference to the machine
   machine: Machine<Event, Context>
 
@@ -20,16 +20,17 @@ class Transition<
 
   async getTarget() {
     const { transition } = this
-    const { guards, context } = this.machine
+    const { guards: rootGuards, context } = this.machine
     if (!Array.isArray(transition)) {
-      const { guard } = transition
-      return !guard || (await areGuardsSatisfied(guard, guards, context))
-        ? transition.target
-        : null
+      const { guard, target } = transition
+      if (!guard || (await areGuardsSatisfied(guard, rootGuards, context))) {
+        return target
+      }
     } else {
       for (let candidate of transition) {
-        if (await areGuardsSatisfied(candidate.guard, guards, context)) {
-          return candidate.target
+        const { guard, target } = candidate
+        if (await areGuardsSatisfied(guard, rootGuards, context)) {
+          return target
         }
       }
     }

@@ -10,8 +10,6 @@ class State<Event extends string, Context extends Record<string, unknown>> {
   on?: { [key in Event]?: Transition<Event, Context> }
   // k/v map of state names to state objects. These are the allowed states of the machine
   states?: Record<string, State<Event, Context>>
-  // A common data store passed around to be read/written to
-  context: Context
   // Reference to the machine
   machine: Machine<Event, Context>
 
@@ -32,6 +30,7 @@ class State<Event extends string, Context extends Record<string, unknown>> {
   send(event: Event, payload?: any) {
     const transition = this.getTransition(event)
     if (transition) {
+      return transition.getTarget()
     }
   }
 }

@@ -11,6 +11,7 @@ export type ExtendedTransition<Context> = {
 }
 
 export type Transition<Context> =
+  | string
   | ExtendedTransition<Context>
   | ExtendedTransition<Context>[]
 
