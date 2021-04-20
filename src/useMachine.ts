@@ -2,7 +2,7 @@ import { useMemo, useEffect, useState } from "react"
 import { Schema } from "../types"
 import Machine from "./Machine"
 
-export const useMachine = <
+const useMachine = <
   E extends string,
   C extends Record<string, unknown>,
   S extends Schema<E, C>
@@ -28,3 +28,5 @@ export const useMachine = <
     return [{ matches, context, toStrings, state }, send] as const
   }, [context, matches, send, state, toStrings])
 }
+
+export default useMachine
