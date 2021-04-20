@@ -41,3 +41,14 @@ export type State<
   on?: EventMap<Event, Context>
   states?: Record<string, State<Event, Context>>
 }
+
+export type Schema<
+  Event extends string,
+  Context extends Record<string, unknown>
+> = {
+  context: Context
+  initial: string
+  states: Record<string, State<Event, Context>>
+  guards?: Record<string, GuardFunction<Context>>
+  actions?: Record<string, ActionFunction<Context>>
+}

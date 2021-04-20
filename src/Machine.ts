@@ -13,6 +13,8 @@ type Config<Event extends string, Context extends Record<string, unknown>> = {
   context: Context
 }
 
+type Observer = (state: string) => void
+
 class Machine<Event extends string, Context extends Record<string, unknown>> {
   // recursive data structure that enumerates all allowed states and their transitions
   states: Record<string, State<Event, Context>>
@@ -26,6 +28,7 @@ class Machine<Event extends string, Context extends Record<string, unknown>> {
   private currentState: string
   // Actual state object through which to dispatch events
   currentNode: State<Event, Context>
+  observers: Observer[] = []
 
   constructor({
     initial,
@@ -70,6 +73,7 @@ class Machine<Event extends string, Context extends Record<string, unknown>> {
         this.currentNode = nextNode
         this.currentState = nextState
         this.runInvoke(event, payload)
+        this.observers.forEach((fn) => fn(nextState))
       }
     }
   }
@@ -80,6 +84,14 @@ class Machine<Event extends string, Context extends Record<string, unknown>> {
 
   get value() {
     return this.currentState
+  }
+
+  matches(state: string) {
+    return this.currentState.startsWith(state)
+  }
+
+  subscribe(observer: Observer) {
+    this.observers.push(observer)
   }
 }
 
