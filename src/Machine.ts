@@ -23,9 +23,9 @@ class Machine<Event extends string, Context extends Record<string, unknown>> {
   // read-write data object passed around to check guards, pass into actions, etc
   context: Context
   // Simple string representation of state to make state checking simpler
-  stateString: string
+  private currentState: string
   // Actual state object through which to dispatch events
-  stateNode: State<Event, Context>
+  currentNode: State<Event, Context>
 
   constructor({
     initial,
@@ -36,33 +36,50 @@ class Machine<Event extends string, Context extends Record<string, unknown>> {
   }: Config<Event, Context>) {
     invariant(initial, NO_INITIAL_STATE)
     this.states = createStates(states, this)
-    this.stateNode = getStateNode(this, initial)
-    invariant(this.stateNode, INVALID_INITIAL_STATE)
+    this.currentNode = getStateNode(this, initial)
+    invariant(this.currentNode, INVALID_INITIAL_STATE)
 
-    this.stateString = initial
+    this.currentState = initial
     this.guards = guards
     this.actions = actions
     this.context = context
+
+    // Handle initial state `invoke`
+    this.runInvoke()
   }
 
-  write(values: Partial<Context> = {}) {
+  write(values: Partial<Context>) {
     this.context = { ...this.context, ...values }
   }
 
+  private runInvoke(event?: Event, payload?: any) {
+    const invocation = this.currentNode.invoke?.(this.context, event)
+    if (typeof invocation === "function") {
+      invocation(this.send.bind(this))
+    } else {
+      this.context = invocation
+    }
+  }
+
   async send(event: Event, payload?: any) {
-    const nextState = await this.stateNode.send(event, payload)
+    const nextState = await this.currentNode.send(event, payload)
     if (!nextState) return
-    if (nextState !== this.stateString) {
+    if (nextState !== this.currentState) {
       const nextNode = getStateNode(this, nextState)
       if (nextNode) {
-        this.stateNode = nextNode
-        this.stateString = nextState
+        this.currentNode = nextNode
+        this.currentState = nextState
+        this.runInvoke(event, payload)
       }
     }
   }
 
   toStrings() {
-    return parseState(this.stateString)
+    return parseState(this.currentState)
+  }
+
+  get value() {
+    return this.currentState
   }
 }
 

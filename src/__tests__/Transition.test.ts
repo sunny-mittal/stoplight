@@ -16,6 +16,9 @@ type TransitionObject = {
 }
 
 describe("Transition#getTarget", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
   describe("unguarded transitions", () => {
     it("returns a simple string target", async () => {
       expect(await simple.getTarget()).toBe(
@@ -56,7 +59,7 @@ describe("Transition#getTarget", () => {
     expect(action).toHaveBeenCalled()
   })
 
-  it.only("executed inline actions on entry", async () => {
+  it("executed inline actions on entry", async () => {
     const action = (extended.__getTransition__() as TransitionObject).actions
     expect(action).not.toHaveBeenCalled()
     await extended.getTarget()

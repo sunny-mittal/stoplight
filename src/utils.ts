@@ -76,3 +76,7 @@ export const executeActions = <Context extends Record<string, unknown>>(
     }
   }
 }
+
+export const assign = <Context extends Record<string, unknown>>(
+  updates: Context,
+) => (context: Context) => ({ ...context, ...updates })

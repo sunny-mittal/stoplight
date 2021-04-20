@@ -1,4 +1,5 @@
 import Machine from "../Machine"
+import { assign } from "../utils"
 
 export const globalGuardFn = () => Promise.resolve(false)
 export const stateGuardFn = () => Promise.resolve(true)
@@ -12,6 +13,7 @@ const mockConfig = {
   },
   states: {
     a: {
+      invoke: assign({ shouldPass: false }),
       on: {
         EVENT_B: "b",
         EVENT_C: [
@@ -23,15 +25,15 @@ const mockConfig = {
           actions: jest.fn(),
         },
         SHOULD_FAIL: {
-          target: "nope",
+          target: "b",
           guard: () => Promise.resolve(false),
         },
         SHOULD_PASS: {
-          target: "yes!",
+          target: "c",
           guard: () => Promise.resolve(true),
         },
         MIGHT_PASS: {
-          target: "passed",
+          target: "d",
           guard: (context) => Promise.resolve(context.shouldPass),
         },
       },
@@ -52,7 +54,12 @@ const mockConfig = {
       },
     },
     c: {},
-    d: {},
+    d: {
+      invoke: () => (send: Function) => send("EVENT_A"),
+      on: {
+        EVENT_A: "a",
+      },
+    },
   },
   guards: {
     globalGuard: globalGuardFn,
